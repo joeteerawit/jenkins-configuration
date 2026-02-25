@@ -1,13 +1,13 @@
 #!/usr/bin/env groovy
 import groovy.text.SimpleTemplateEngine
 
-def pipelineLists = [
-        [
-                repository: 'joecomscience/spring-boot-demo',
-                jobfolder : 'example',
-                jobname   : 'spring-boot-demo',
-                template  : 'Jenkinsfile',
-        ]
+[
+    [
+        repository: 'joecomscience/spring-boot-demo',
+        jobfolder : 'example',
+        jobname   : 'spring-boot-demo',
+        template  : 'Jenkinsfile',
+    ]
 ].each { item ->
     def projectRepo = item['repository']
     def jobfolder = item['jobfolder']
@@ -18,20 +18,20 @@ def pipelineLists = [
     def upSteamJobScriptFileLocation = "${JENKINS_HOME}/workspace/${jobfolder}/seed_job/upsteam_jobs/default.groovy"
     def templateEngine = new SimpleTemplateEngine()
     def upSteamJobScript = new File(upSteamJobScriptFileLocation)
-            .text
-            .stripIndent()
-            .trim()
+        .text
+        .stripIndent()
+        .trim()
     def dataBindingToTemplate = [
-            "jenkinsConfigRepo": "${JENKINS_CONFIGURATION_REPO}",
-            "gitHostName"      : "${GIT_HOST_NAME}",
-            "branch"           : "${branch}",
-            "projectRepo"      : "${projectRepo}",
-            "jobname"          : "${jobname}",
-            "template"         : "jenkinsfile/${jobfolder}/templates/${jobTemplateFile}.groovy",
+        'jenkinsConfigRepo': "${JENKINS_CONFIGURATION_REPO}",
+        'gitHostName'      : "${GIT_HOST_NAME}",
+        'branch'           : "${branch}",
+        'projectRepo'      : "${projectRepo}",
+        'jobname'          : "${jobname}",
+        'template'         : "jenkinsfile/${jobfolder}/templates/${jobTemplateFile}.groovy",
     ]
     def pipelineScript = templateEngine
-            .createTemplate(upSteamJobScript)
-            .make(dataBindingToTemplate)
+        .createTemplate(upSteamJobScript)
+        .make(dataBindingToTemplate)
 
     folder("${jobfolder}")
     pipelineJob("${jobfolder}/${jobname}") {

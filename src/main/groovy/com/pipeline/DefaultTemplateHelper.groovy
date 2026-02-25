@@ -2,35 +2,40 @@ package com.pipeline
 
 import groovy.text.SimpleTemplateEngine
 
+/**
+ * Helper class for generating Jenkins pipeline job scripts from templates.
+ */
 class DefaultTemplateHelper {
-    public String JobFolder;
-    public String JobName;
-    public String JenkinsConfigRepo = this.global.JENKINS_CONFIGURATION_REPO;
-    public String GitHostName = this.global.GIT_HOST_NAME;
-    public String Branch = "master";
-    public String Repository;
-    public String TemplateFileName;
-    private String JenkinsHome = this.global.JENKINS_HOME;
-    def global;
 
-    def GetPipelineScript() {
-        def upSteamJobScriptFileLocation = "${this.JenkinsHome}/workspace/${this.JobFolder}/seed_job/upsteam_jobs/default.groovy";
-        def templateEngine = new SimpleTemplateEngine();
-        def upSteamJobScript = new File(upSteamJobScriptFileLocation)
-                .text
-                .stripIndent()
-                .trim();
-        def dataBindingToTemplate = [
-                "jenkinsConfigRepo": "${this.JenkinsConfigRepo}",
-                "gitHostName"      : "${this.GitHostName}",
-                "branch"           : "${this.Branch}",
-                "projectRepo"      : "${this.Repository}",
-                "jobname"          : "${this.JobName}",
-                "template"         : "jenkinsfile/${this.JobName}/templates/${this.TemplateFileName}.groovy",
-        ];
+    String jobFolder
+    String jobName
+    String jenkinsConfigRepo = this.global.JENKINS_CONFIGURATION_REPO
+    String gitHostName = this.global.GIT_HOST_NAME
+    String branch = 'master'
+    String repository
+    String templateFileName
+    private final String jenkinsHome = this.global.JENKINS_HOME
+    def global
+
+    /* groovylint-disable JavaIoPackageAccess */
+    String getPipelineScript() {
+        String scriptPath =
+            "${this.jenkinsHome}/workspace/${this.jobFolder}/seed_job/upsteam_jobs/default.groovy"
+        SimpleTemplateEngine templateEngine = new SimpleTemplateEngine()
+        String upSteamJobScript = new File(scriptPath).text.stripIndent().trim()
+        /* groovylint-enable JavaIoPackageAccess */
+        Map dataBindingToTemplate = [
+            'jenkinsConfigRepo': "${this.jenkinsConfigRepo}",
+            'gitHostName'      : "${this.gitHostName}",
+            'branch'           : "${this.branch}",
+            'projectRepo'      : "${this.repository}",
+            'jobname'          : "${this.jobName}",
+            'template'         : "jenkinsfile/${this.jobName}/templates/${this.templateFileName}.groovy",
+        ]
         return templateEngine
-                .createTemplate(upSteamJobScript)
-                .make(dataBindingToTemplate);
+            .createTemplate(upSteamJobScript)
+            .make(dataBindingToTemplate)
     }
+
 }
 

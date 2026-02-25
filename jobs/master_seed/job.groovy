@@ -1,14 +1,13 @@
 #!/usr/bin/env groovy
 
-def entities = [
-        [
-                name: 'example'
-        ]
+[
+    [
+        name: 'example'
+    ]
 ].each { item ->
+    def entity = item['name']
 
-    entity = item['name']
-
-    folder("${entity}")
+    folder(entity)
     job("${entity}/seed_job") {
         description "Seed Job for ${entity}"
         disabled(false)

@@ -1,0 +1,21 @@
+{
+    "extends": "recommended",
+    "rules": {
+        "CompileStatic": "off",
+        "DuplicateStringLiteral": {
+            "enabled": false
+        },
+        "FieldTypeRequired": "off",
+        "MethodParameterTypeRequired": "off",
+        "MethodReturnTypeRequired": "off",
+        "NestedBlockDepth": {
+            "enabled": false
+        },
+        "NoDef": "off",
+        "VariableTypeRequired": "off"
+    },
+    "formatting": {
+        "tabSize": 4,
+        "insertSpaces": true
+    }
+}

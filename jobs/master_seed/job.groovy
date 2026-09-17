@@ -32,4 +32,7 @@
             }
         }
     }
+
+    // generate the folder's own jobs without waiting for someone to click build
+    queue("${entity}/seed_job")
 }

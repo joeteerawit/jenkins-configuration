@@ -18,7 +18,7 @@
             git {
                 remote {
                     url("${GIT_HOST_NAME}/${JENKINS_CONFIGURATION_REPO}")
-                    credentials('git_credential')
+                    credentials('github_credential')
                 }
                 branch('master')
             }

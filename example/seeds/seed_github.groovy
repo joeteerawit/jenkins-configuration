@@ -17,6 +17,7 @@ import groovy.text.SimpleTemplateEngine
 
     def upSteamJobScriptFileLocation = "${JENKINS_HOME}/workspace/${jobfolder}/seed_job/upsteam_jobs/default.groovy"
     def templateEngine = new SimpleTemplateEngine()
+    /* groovylint-disable-next-line JavaIoPackageAccess */
     def upSteamJobScript = new File(upSteamJobScriptFileLocation)
         .text
         .stripIndent()
@@ -42,10 +43,11 @@ import groovy.text.SimpleTemplateEngine
         properties {
             disableConcurrentBuilds()
             githubProjectUrl("${GIT_HOST_NAME}/${projectRepo}.git")
-        }
-
-        triggers {
-            githubPush()
+            pipelineTriggers {
+                triggers {
+                    githubPush()
+                }
+            }
         }
 
         definition {

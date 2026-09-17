@@ -1,6 +1,6 @@
 #!/usr/bin/env groovy
 
-/* groovylint-disable DuplicateStringLiteral, DuplicateMapLiteral */
+/* groovylint-disable DuplicateStringLiteral, DuplicateMapLiteral, GStringExpressionWithinString */
 /* groovylint-disable-next-line UnusedVariable, VariableName */
 @Library('pipeline-library') _
 
@@ -27,7 +27,7 @@ node {
                 userRemoteConfigs: [
                     [
                         credentialsId: 'github_credential',
-                        url          : '$gitHostName/$jenkinsConfigRepo.git'
+                        url          : '$gitHostName/${jenkinsConfigRepo}.git'
                     ]
                 ]
             ]
@@ -59,7 +59,7 @@ node {
                 userRemoteConfigs: [
                     [
                         credentialsId: 'github_credential',
-                        url          : '$gitHostName/$projectRepo.git'
+                        url          : '$gitHostName/${projectRepo}.git'
                     ]
                 ]
             ]

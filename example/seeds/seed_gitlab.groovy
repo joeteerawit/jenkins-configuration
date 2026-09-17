@@ -21,7 +21,7 @@ import com.pipeline.DefaultTemplateHelper
         repository: projectRepo,
         templateFileName: jobTemplateFile,
     )
-    def pipelineScript = pipeline.getPipelineScript()
+    def pipelineScript = pipeline.pipelineScript
 
     folder(jobfolder)
     pipelineJob("${jobfolder}/${jobname}") {

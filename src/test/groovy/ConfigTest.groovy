@@ -53,4 +53,12 @@ try {
 }
 assert failed, 'a JobConfig without a template should refuse to render'
 
+// job dsl makes a class out of each script file name and rejects anything else
+new File('teams').eachFileRecurse { file ->
+    if (file.name.endsWith('.groovy')) {
+        assert file.name ==~ /[A-Za-z_][A-Za-z0-9_]*\.groovy/,
+            "job dsl will not load '${file.name}': letters, digits and underscores only"
+    }
+}
+
 println 'PASS: seed config tests'

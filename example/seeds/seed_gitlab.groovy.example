@@ -4,44 +4,31 @@
 //
 // master_seed runs example/seeds/*.groovy, so the .example suffix keeps this
 // out of the seed_job build. Rename it back to .groovy to switch it on, and
-// fix these three things first:
+// fix these two things first:
 //
-//   1. DefaultTemplateHelper below lives in the shared library, and job dsl
-//      scripts do not get the shared library classpath (@Library is pipeline
-//      only). Read the template with SimpleTemplateEngine the way
-//      seed_github.groovy does, or vendor the class into this repo.
-//   2. GITLAB_TOKEN is not one of the globals the base image exports, add it
+//   1. GITLAB_TOKEN is not one of the globals the base image exports, add it
 //      to Config.getGlobalEnvVars() there.
-//   3. jobname collides with seed_github.groovy, both generate
+//   2. jobName collides with seed_github.groovy, both generate
 //      example/spring-boot-demo.
 //
-import com.pipeline.DefaultTemplateHelper
+import com.pipeline.JobConfig
+
+def globals = [
+    jenkinsHome: "${JENKINS_HOME}",
+    configRepo : "${JENKINS_CONFIGURATION_REPO}",
+    gitHost    : "${GIT_HOST_NAME}",
+]
 
 [
-    [
+    new JobConfig(
         repository: 'joecomscience/spring-boot-demo',
-        jobfolder : 'example',
-        jobname   : 'spring-boot-demo',
-        template  : 'Jenkinsfile',
-    ]
-].each { item ->
-    def projectRepo = item['repository']
-    def jobfolder = item['jobfolder']
-    def jobname = item['jobname']
-    def branch = item.containsKey('branch') ? item['branch'].toLowerCase() : 'master'
-    def jobTemplateFile = item.containsKey('template') ? item['template'] : 'Jenkinsfile'
-
-    def pipeline = new DefaultTemplateHelper(
-        jobFolder: jobfolder,
-        jobName: jobname,
-        repository: projectRepo,
-        templateFileName: jobTemplateFile,
-    )
-    def pipelineScript = pipeline.pipelineScript
-
-    folder(jobfolder)
-    pipelineJob("${jobfolder}/${jobname}") {
-        description "Pipeline for ${jobname}"
+        jobFolder: 'example',
+        jobName: 'spring-boot-demo',
+    ),
+].each { cfg ->
+    folder(cfg.jobFolder)
+    pipelineJob(cfg.fullName) {
+        description "Pipeline for ${cfg.jobName}"
         disabled(false)
         logRotator(-1, 5)
 
@@ -51,7 +38,7 @@ import com.pipeline.DefaultTemplateHelper
                 triggers {
                     gitlab {
                         branchFilterType('NameBasedFilter')
-                        includeBranchesSpec(branch)
+                        includeBranchesSpec(cfg.branch)
                         secretToken("${GITLAB_TOKEN}")
                         triggerOnAcceptedMergeRequest(false)
                         triggerOnApprovedMergeRequest(false)
@@ -66,7 +53,7 @@ import com.pipeline.DefaultTemplateHelper
         definition {
             cps {
                 sandbox(true)
-                script(pipelineScript.toString())
+                script(cfg.pipelineScript(globals))
             }
         }
     }

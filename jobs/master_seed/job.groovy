@@ -1,15 +1,12 @@
 #!/usr/bin/env groovy
+import com.pipeline.FolderConfig
 
 [
-    [
-        name: 'example'
-    ]
-].each { item ->
-    def entity = item['name']
-
-    folder(entity)
-    job("${entity}/seed_job") {
-        description "Seed Job for ${entity}"
+    new FolderConfig(name: 'example'),
+].each { cfg ->
+    folder(cfg.name)
+    job(cfg.seedJobName) {
+        description "Seed Job for ${cfg.name}"
         disabled(false)
         concurrentBuild(false)
         logRotator(-1, 5)
@@ -18,15 +15,16 @@
             git {
                 remote {
                     url("${GIT_HOST_NAME}/${JENKINS_CONFIGURATION_REPO}")
-                    credentials('github_credential')
+                    credentials(cfg.credentialsId)
                 }
-                branch('master')
+                branch(cfg.branch)
             }
         }
 
         steps {
             jobDsl {
-                targets("${entity}/seeds/*.groovy")
+                targets(cfg.seedTargets)
+                additionalClasspath('src/main/groovy')
                 sandbox(false)
                 ignoreExisting(false)
             }
@@ -34,5 +32,5 @@
     }
 
     // generate the folder's own jobs without waiting for someone to click build
-    queue("${entity}/seed_job")
+    queue(cfg.seedJobName)
 }

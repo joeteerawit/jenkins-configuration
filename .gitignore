@@ -161,3 +161,4 @@ Temporary Items
 
 # Jenkins local data directory
 jenkins_home/
+.cache/

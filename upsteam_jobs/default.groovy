@@ -2,7 +2,7 @@
 
 /* groovylint-disable DuplicateStringLiteral, DuplicateMapLiteral, GStringExpressionWithinString */
 /* groovylint-disable-next-line UnusedVariable, VariableName */
-@Library('pipeline-library') _
+@Library('pipeline-library@$libraryVersion') _
 
 node {
     stage('Refetch Script') {
@@ -67,5 +67,5 @@ node {
     }
 
     def jf = load('$template')
-    jf.defaultPipeline('$jobname')
+    jf.defaultPipeline(jobname: '$jobname', sonarProjectKey: '$sonarProjectKey')
 }

@@ -4,7 +4,8 @@ import com.pipeline.FolderConfig
 [
     new FolderConfig(name: 'example'),
 ].each { cfg ->
-    folder(cfg.name)
+    cfg.ancestors.each { ancestor -> folder(ancestor) }
+
     job(cfg.seedJobName) {
         description "Seed Job for ${cfg.name}"
         disabled(false)
